@@ -17,7 +17,7 @@ public class Chromosome {
 
         // Initialize chromosome
         for (int i = 0; i < chromosome.length; i++) {
-            this.chromosome[i] = RandomHelper.randomRoundedNumber() == 0 ? 1 : 0;
+            this.chromosome[i] = RandomHelper.randomIntegerInInterval(2) == 1 ? 1 : 0;
         }
 
         this.fitness = calculateFitness();
@@ -49,7 +49,10 @@ public class Chromosome {
 
     public double calculateFitness() {
         int decimal = NumberHelper.binaryToDecimal(this.chromosome);
+        int bits = this.chromosome.length;
+        double realX = NumberHelper.realX(decimal, -1, 1, bits);
+        System.out.println("decimal " + " real " + realX);
 
-        return Function.fitness(decimal);
+        return Function.fitness(realX);
     }
 }

@@ -4,32 +4,82 @@ import Model.Child;
 import Model.Chromosome;
 
 public class GeneticAlgorithm {
+    private int min = 0;
+    private int max = 0;
+
+    public GeneticAlgorithm() {
+    }
+
+    public GeneticAlgorithm(int min, int max) {
+        this.min = min;
+        this.max = max;
+    }
+
     public static Chromosome initialize(
             Chromosome[] generation,
             int n,
             double pc,
             double pm
     ) {
+        double fittest = getMaxFittest(generation);
+        int countGeneration = 0;
         do {
-            fillProporcionalPercentOfTotalFitness(generation);
+            fillProportionalPercentOfTotalFitness(generation);
             Roulette roulette = new Roulette(generation);
             Chromosome[] newGeneration = new Chromosome[n];
 
             for (int i = 0; i < n; i+=2) {
                 Chromosome parentOne = roulette.spin();
                 Chromosome parentTwo = roulette.spin();
+                int[] chromossome1 = parentOne.getChromosome();
+                int[] chromossome2 = parentTwo.getChromosome();
+
+                String parent1 = "";
+                String parent2 = "";
+
+                for (int j = chromossome1.length - 1; j > 0; j--) {
+                    parent1 += Integer.toString(chromossome1[j]);
+                    parent2 += Integer.toString(chromossome2[j]);
+                }
+
+                System.out.println("Generation: " + countGeneration + " Parent 1 " + parent1 + " Fittest1 " + parentOne.getFitness() + " Parent 2 " + parent2 + " Fittest2 " + parentTwo.getFitness());
                 Child childOne = new Child(parentOne, parentTwo, pc, pm);
                 Child childTwo = new Child(parentTwo, parentOne, pc, pm);
+                int[] chromossome12 = childOne.getChromosome();
+                int[] chromossome22 = childTwo.getChromosome();
 
+                String child1 = "";
+                String child2 = "";
+
+                for (int j = chromossome1.length - 1; j > 0; j--) {
+                    child1 += Integer.toString(chromossome12[j]);
+                    child2 += Integer.toString(chromossome22[j]);
+                }
+
+                System.out.println("Generation: " + countGeneration + " Child 1 " + child1 + " Fittest1 " + childOne.getFitness() + " Child 2 " + child2 + " Fittest2 " + childTwo.getFitness());
                 newGeneration[i] = childOne;
                 newGeneration[i + 1] = childTwo;
             }
 
             generation = newGeneration;
+            countGeneration++;
+            fittest = getMaxFittest(generation);
+            System.out.println("Generation: " + countGeneration + " Fittest " + fittest);
 
-        } while (!objective); // The stop condition, don't implemented
+        } while (fittest < 1.85); // The stop condition, don't implemented
 
+        System.out.println("Generation: " + countGeneration);
         return theBestFitness(generation);
+    }
+
+    private static double getMaxFittest(Chromosome[] initialPopulation) {
+        double maxFit = 0;
+        for (int i = 0; i < initialPopulation.length; i++) {
+            if (maxFit <= initialPopulation[i].getFitness()) {
+                maxFit = initialPopulation[i].getFitness();
+            }
+        }
+        return maxFit;
     }
 
     private static Chromosome theBestFitness(Chromosome[] generation) {
@@ -46,7 +96,7 @@ public class GeneticAlgorithm {
         return generation[bestIdx];
     }
 
-    private static void fillProporcionalPercentOfTotalFitness(Chromosome[] population) {
+    private static void fillProportionalPercentOfTotalFitness(Chromosome[] population) {
         double summationFitness = summationFitness(population);
         int sizeOfPopulation = population.length;
         double percent = 0;
@@ -56,8 +106,6 @@ public class GeneticAlgorithm {
             population[i].setPercentOfTotalFitness(percent);
         }
     }
-
-
 
     private static double summationFitness(Chromosome[] population) {
         int sizeOfPopulation = population.length;
