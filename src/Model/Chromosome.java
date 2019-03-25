@@ -4,6 +4,9 @@ import Algorithm.Function;
 import Utils.NumberHelper;
 import Utils.RandomHelper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Chromosome {
     private int[] chromosome;
     private double fitness;
@@ -17,7 +20,7 @@ public class Chromosome {
 
         // Initialize chromosome
         for (int i = 0; i < chromosome.length; i++) {
-            this.chromosome[i] = RandomHelper.randomIntegerInInterval(2) == 1 ? 1 : 0;
+            this.chromosome[i] = RandomHelper.randomDoubleInInterval(0, 1) > 0.5 ? 1 : 0;
         }
 
         this.fitness = calculateFitness();
@@ -47,12 +50,32 @@ public class Chromosome {
         this.percentOfTotalFitness = percentOfTotalFitness;
     }
 
-    public double calculateFitness() {
-        int decimal = NumberHelper.binaryToDecimal(this.chromosome);
-        int bits = this.chromosome.length;
-        double realX = NumberHelper.realX(decimal, -1, 1, bits);
-        System.out.println("decimal " + " real " + realX);
+    private int[] getBinaryOfChromosome(int index) {
+        int bits = this.chromosome.length / 2;
+        int[] binary = new int[bits];
 
-        return Function.fitness(realX);
+        for (int i = 0; i < bits; i++) {
+            binary[i] = this.chromosome[index];
+            index++;
+        }
+
+        return binary;
+    }
+
+    public double calculateFitness() {
+        int bits = this.chromosome.length / 2;
+        int[] binaryX = getBinaryOfChromosome(0);
+        int[] binaryY = getBinaryOfChromosome(bits);
+
+        int x = NumberHelper.binaryToDecimal(binaryX);
+        int y = NumberHelper.binaryToDecimal(binaryY);
+        System.out.println("decimal " + " x " + x + " y " + y);
+
+        double realX = NumberHelper.realX(x, -5, 5, bits);
+        double realY = NumberHelper.realX(y, -5, 5, bits);
+
+        System.out.println("decimal " + " real x " + realX + " real y " + realY);
+
+        return Function.fitness(realX, realY);
     }
 }

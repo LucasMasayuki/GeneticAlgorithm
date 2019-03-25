@@ -50,7 +50,7 @@ public class NumberHelper {
         return q/2;
     }
 
-    public static double mapped(int number, double q) {
-        return 1 + number * q;
+    public static double mapped(int min, int number, double q) {
+        return min + number * q;
     }
 }

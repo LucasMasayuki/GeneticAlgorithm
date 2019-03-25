@@ -6,23 +6,22 @@ import Model.Chromosome;
 public class GeneticAlgorithm {
     private int min = 0;
     private int max = 0;
-
-    public GeneticAlgorithm() {
-    }
-
-    public GeneticAlgorithm(int min, int max) {
-        this.min = min;
-        this.max = max;
-    }
+    private static int bits;
 
     public static Chromosome initialize(
-            Chromosome[] generation,
+            int length,
             int n,
             double pc,
             double pm
     ) {
-        double fittest = getMaxFittest(generation);
-        int countGeneration = 0;
+        bits = length;
+        Chromosome[] initialPopulation = generateInitialPopulation(n);
+        Chromosome[] generation = initialPopulation;
+
+        double fittest = getMaxFittest(initialPopulation);
+        System.out.println("Generation: " + 1 + " Fittest " + fittest);
+        int countGeneration = 1;
+
         do {
             fillProportionalPercentOfTotalFitness(generation);
             Roulette roulette = new Roulette(generation);
@@ -66,10 +65,19 @@ public class GeneticAlgorithm {
             fittest = getMaxFittest(generation);
             System.out.println("Generation: " + countGeneration + " Fittest " + fittest);
 
-        } while (fittest < 1.85); // The stop condition, don't implemented
+        } while (countGeneration != 15); // The stop condition, don't implemented
 
         System.out.println("Generation: " + countGeneration);
         return theBestFitness(generation);
+    }
+
+    private static Chromosome[] generateInitialPopulation(int n) {
+        Chromosome[] population = new Chromosome[n];
+        for (int i = 0; i < n; i++) {
+            population[i] = new Chromosome(bits);
+        }
+
+        return population;
     }
 
     private static double getMaxFittest(Chromosome[] initialPopulation) {
