@@ -4,9 +4,6 @@ import Algorithm.Function;
 import Utils.NumberHelper;
 import Utils.RandomHelper;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Chromosome {
     private int[] chromosome;
     private double fitness;

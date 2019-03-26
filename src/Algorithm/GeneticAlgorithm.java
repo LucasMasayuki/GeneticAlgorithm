@@ -30,29 +30,29 @@ public class GeneticAlgorithm {
             for (int i = 0; i < n; i+=2) {
                 Chromosome parentOne = roulette.spin();
                 Chromosome parentTwo = roulette.spin();
-                int[] chromossome1 = parentOne.getChromosome();
-                int[] chromossome2 = parentTwo.getChromosome();
+                int[] chromosome1 = parentOne.getChromosome();
+                int[] chromosome2 = parentTwo.getChromosome();
 
                 String parent1 = "";
                 String parent2 = "";
 
-                for (int j = chromossome1.length - 1; j > 0; j--) {
-                    parent1 += Integer.toString(chromossome1[j]);
-                    parent2 += Integer.toString(chromossome2[j]);
+                for (int j = chromosome1.length - 1; j > 0; j--) {
+                    parent1 += Integer.toString(chromosome1[j]);
+                    parent2 += Integer.toString(chromosome2[j]);
                 }
 
                 System.out.println("Generation: " + countGeneration + " Parent 1 " + parent1 + " Fittest1 " + parentOne.getFitness() + " Parent 2 " + parent2 + " Fittest2 " + parentTwo.getFitness());
-                Child childOne = new Child(parentOne, parentTwo, pc, pm);
-                Child childTwo = new Child(parentTwo, parentOne, pc, pm);
-                int[] chromossome12 = childOne.getChromosome();
-                int[] chromossome22 = childTwo.getChromosome();
+                Child childOne = new Child(parentOne, parentTwo, pc, pm, 1, 1);
+                Child childTwo = new Child(parentTwo, parentOne, pc, pm, 1, 1);
+                int[] chromosome12 = childOne.getChromosome();
+                int[] chromosome22 = childTwo.getChromosome();
 
                 String child1 = "";
                 String child2 = "";
 
-                for (int j = chromossome1.length - 1; j > 0; j--) {
-                    child1 += Integer.toString(chromossome12[j]);
-                    child2 += Integer.toString(chromossome22[j]);
+                for (int j = chromosome12.length - 1; j > 0; j--) {
+                    child1 += Integer.toString(chromosome12[j]);
+                    child2 += Integer.toString(chromosome22[j]);
                 }
 
                 System.out.println("Generation: " + countGeneration + " Child 1 " + child1 + " Fittest1 " + childOne.getFitness() + " Child 2 " + child2 + " Fittest2 " + childTwo.getFitness());
@@ -113,6 +113,14 @@ public class GeneticAlgorithm {
             percent += population[i].getFitness() / summationFitness;
             population[i].setPercentOfTotalFitness(percent);
         }
+    }
+
+    private static void printGeneration(Chromosome[] population) {
+        System.out.println("Attention|||");
+        for (int i = 0; i < population.length; i++) {
+            System.out.println("proportional: " + population[i].getPercentOfTotalFitness());
+        }
+        System.out.println("finish|||");
     }
 
     private static double summationFitness(Chromosome[] population) {
