@@ -6,7 +6,7 @@ import Utils.RandomHelper;
 public class Roulette {
     public Chromosome[] population;
 
-    Roulette(Chromosome[] population) {
+    public Roulette(Chromosome[] population) {
         this.population = population;
     }
 

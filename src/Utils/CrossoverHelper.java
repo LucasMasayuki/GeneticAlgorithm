@@ -88,10 +88,17 @@ public class CrossoverHelper {
         if (random < pc) {
             int maxSize = parentOne.length;
             int[] child = new int[maxSize];
-            int positionToStop = RandomHelper.randomIntegerInInterval(maxSize);
+            int start = RandomHelper.randomIntegerInInterval(maxSize);
+            int last = RandomHelper.randomIntegerInInterval(maxSize);
+
+            if (start > last) {
+                int temp = last;
+                last = start;
+                start = temp;
+            }
 
             for (int i = 0; i < maxSize; i++) {
-                if (i < positionToStop) {
+                if (i < start || i > last) {
                     child[i] = parentOne[i];
                 } else {
                     child[i] = parentTwo[i];
@@ -110,7 +117,7 @@ public class CrossoverHelper {
     ) {
         double random = RandomHelper.randomDoubleInInterval(0, 1);
 
-        if (random < pc) {;
+        if (random < pc) {
             int maxSize = parentOne.length;
 
             int[] mask = new int[maxSize];

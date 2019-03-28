@@ -1,11 +1,12 @@
 package Algorithm;
 
-import Model.Child;
 import Model.Chromosome;
+import Utils.MergeSort;
+import Utils.PopulationHelper;
+
+import java.util.Arrays;
 
 public class GeneticAlgorithm {
-    private int min = 0;
-    private int max = 0;
     private static int bits;
 
     public static Chromosome initialize(
@@ -20,44 +21,29 @@ public class GeneticAlgorithm {
 
         double fittest = getMaxFittest(initialPopulation);
         System.out.println("Generation: " + 1 + " Fittest " + fittest);
-        int countGeneration = 1;
+        int countGeneration = 0;
 
         do {
             fillProportionalPercentOfTotalFitness(generation);
-            Roulette roulette = new Roulette(generation);
             Chromosome[] newGeneration = new Chromosome[n];
 
-            for (int i = 0; i < n; i+=2) {
-                Chromosome parentOne = roulette.spin();
-                Chromosome parentTwo = roulette.spin();
-                int[] chromosome1 = parentOne.getChromosome();
-                int[] chromosome2 = parentTwo.getChromosome();
+            Chromosome[] populationOne = PopulationHelper.generatePopulationOne(generation.clone(), n, pc, pm);
+            Chromosome[] populationTwo = PopulationHelper.generatePopulationTwo(generation.clone(), n, pc, pm);
+            Chromosome[] populationThree = PopulationHelper.generatePopulationThree(generation.clone(), n, pc, pm);
+            Chromosome[] populationFour = PopulationHelper.generatePopulationFour(generation.clone(), n, pc, pm);
+            Chromosome[] populationFive = PopulationHelper.generatePopulationFive(generation.clone(), n, pc, pm);
+            Chromosome[] populationSix = PopulationHelper.generatePopulationSix(generation.clone(), n, pc, pm);
 
-                String parent1 = "";
-                String parent2 = "";
+            Chromosome[] merged = combine(populationOne, populationTwo);
+            merged = combine(merged, populationThree);
+            merged = combine(merged, populationFour);
+            merged = combine(merged, populationFive);
+            merged = combine(merged, populationSix);
 
-                for (int j = chromosome1.length - 1; j > 0; j--) {
-                    parent1 += Integer.toString(chromosome1[j]);
-                    parent2 += Integer.toString(chromosome2[j]);
-                }
+            MergeSort.sort(merged, 60);
 
-                System.out.println("Generation: " + countGeneration + " Parent 1 " + parent1 + " Fittest1 " + parentOne.getFitness() + " Parent 2 " + parent2 + " Fittest2 " + parentTwo.getFitness());
-                Child childOne = new Child(parentOne, parentTwo, pc, pm, 1, 1);
-                Child childTwo = new Child(parentTwo, parentOne, pc, pm, 1, 1);
-                int[] chromosome12 = childOne.getChromosome();
-                int[] chromosome22 = childTwo.getChromosome();
-
-                String child1 = "";
-                String child2 = "";
-
-                for (int j = chromosome12.length - 1; j > 0; j--) {
-                    child1 += Integer.toString(chromosome12[j]);
-                    child2 += Integer.toString(chromosome22[j]);
-                }
-
-                System.out.println("Generation: " + countGeneration + " Child 1 " + child1 + " Fittest1 " + childOne.getFitness() + " Child 2 " + child2 + " Fittest2 " + childTwo.getFitness());
-                newGeneration[i] = childOne;
-                newGeneration[i + 1] = childTwo;
+            for (int j = 0; j < newGeneration.length; j++) {
+                newGeneration[j] = merged[j];
             }
 
             generation = newGeneration;
@@ -65,17 +51,28 @@ public class GeneticAlgorithm {
             fittest = getMaxFittest(generation);
             System.out.println("Generation: " + countGeneration + " Fittest " + fittest);
 
-        } while (countGeneration != 15); // The stop condition, don't implemented
+        } while (countGeneration != 500); // The stop condition, don't implemented
 
         System.out.println("Generation: " + countGeneration);
         return theBestFitness(generation);
     }
 
+    public static Chromosome[] combine(Chromosome[] a, Chromosome[] b){
+        int length = a.length + b.length;
+        Chromosome[] result = new Chromosome[length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
+    }
+
     private static Chromosome[] generateInitialPopulation(int n) {
         Chromosome[] population = new Chromosome[n];
+
         for (int i = 0; i < n; i++) {
             population[i] = new Chromosome(bits);
         }
+
+        MergeSort.sort(population, n);
 
         return population;
     }
@@ -95,7 +92,7 @@ public class GeneticAlgorithm {
         int bestIdx = 0;
 
         for (int i = 0; i < generation.length; i++) {
-            if (bestFitness < generation[i].getFitness()) {
+            if (bestFitness > generation[i].getFitness()) {
                 bestFitness = generation[i].getFitness();
                 bestIdx = i;
             }
@@ -118,7 +115,7 @@ public class GeneticAlgorithm {
     private static void printGeneration(Chromosome[] population) {
         System.out.println("Attention|||");
         for (int i = 0; i < population.length; i++) {
-            System.out.println("proportional: " + population[i].getPercentOfTotalFitness());
+            System.out.println("proportional: " + population[i].getPercentOfTotalFitness() + " fitness " + population[i].getFitness());
         }
         System.out.println("finish|||");
     }
