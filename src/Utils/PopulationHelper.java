@@ -223,7 +223,7 @@ public class PopulationHelper {
 
             System.out.println("PopulationFive: Parent 1 " + parent1 + " Fittest1 " + parentOne.getFitness() + " Parent 2 " + parent2 + " Fittest2 " + parentTwo.getFitness());
             Child childOne = new Child(parentOne, parentTwo, pc, pm, 3, 1);
-            Child childTwo = new Child(parentTwo, parentOne, pc, pm, 3, 1);
+            Child childTwo = childOne.generateBrotherUniform(pc, pm,  1);
             int[] chromosome12 = childOne.getChromosome();
             int[] chromosome22 = childTwo.getChromosome();
 
@@ -269,7 +269,7 @@ public class PopulationHelper {
 
             System.out.println("PopulationSix: Parent 1 " + parent1 + " Fittest1 " + parentOne.getFitness() + " Parent 2 " + parent2 + " Fittest2 " + parentTwo.getFitness());
             Child childOne = new Child(parentOne, parentTwo, pc, pm, 3, 1);
-            Child childTwo = new Child(parentTwo, parentOne, pc, pm, 3, 1);
+            Child childTwo = childOne.generateBrotherUniform(pc, pm,  1);
             int[] chromosome12 = childOne.getChromosome();
             int[] chromosome22 = childTwo.getChromosome();
 

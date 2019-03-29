@@ -51,7 +51,7 @@ public class GeneticAlgorithm {
             fittest = getMaxFittest(generation);
             System.out.println("Generation: " + countGeneration + " Fittest " + fittest);
 
-        } while (countGeneration != 500); // The stop condition, don't implemented
+        } while (countGeneration < 1000); // The stop condition, don't implemented
 
         System.out.println("Generation: " + countGeneration);
         return theBestFitness(generation);
