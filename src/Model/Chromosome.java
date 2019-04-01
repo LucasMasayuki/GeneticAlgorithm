@@ -66,12 +66,12 @@ public class Chromosome {
 
         int x = NumberHelper.binaryToDecimal(binaryX);
         int y = NumberHelper.binaryToDecimal(binaryY);
-        System.out.println("decimal " + " x " + x + " y " + y);
+        //System.out.println("decimal " + " x " + x + " y " + y);
 
         double realX = NumberHelper.realX(x, -5, 5, bits);
         double realY = NumberHelper.realX(y, -5, 5, bits);
 
-        System.out.println("decimal " + " real x " + realX + " real y " + realY);
+        //System.out.println("decimal " + " real x " + realX + " real y " + realY);
 
         return Function.fitness(realX, realY);
     }

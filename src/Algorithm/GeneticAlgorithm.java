@@ -19,39 +19,51 @@ public class GeneticAlgorithm {
         Chromosome[] initialPopulation = generateInitialPopulation(n);
         Chromosome[] generation = initialPopulation;
 
-        double fittest = getMaxFittest(initialPopulation);
-        System.out.println("Generation: " + 1 + " Fittest " + fittest);
+        double fittest = getMinFittest(initialPopulation);
+        System.out.println("Generation: " + 0 + " Fittest " + fittest);
         int countGeneration = 0;
 
         do {
             fillProportionalPercentOfTotalFitness(generation);
             Chromosome[] newGeneration = new Chromosome[n];
 
-            Chromosome[] populationOne = PopulationHelper.generatePopulationOne(generation.clone(), n, pc, pm);
-            Chromosome[] populationTwo = PopulationHelper.generatePopulationTwo(generation.clone(), n, pc, pm);
-            Chromosome[] populationThree = PopulationHelper.generatePopulationThree(generation.clone(), n, pc, pm);
-            Chromosome[] populationFour = PopulationHelper.generatePopulationFour(generation.clone(), n, pc, pm);
-            Chromosome[] populationFive = PopulationHelper.generatePopulationFive(generation.clone(), n, pc, pm);
-            Chromosome[] populationSix = PopulationHelper.generatePopulationSix(generation.clone(), n, pc, pm);
+            Chromosome[] populationOne = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 1, 1, false, 1);
+            Chromosome[] populationTwo = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 1, 2, false, 2);
+            Chromosome[] populationThree = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 1, 1, true, 3);
+            Chromosome[] populationFour = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 1, 2, true, 4);
+            Chromosome[] populationFive = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 2, 1, false, 5);
+            Chromosome[] populationSix = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 2, 2, false, 6);
+            Chromosome[] populationSeven = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 2, 1, true, 7);
+            Chromosome[] populationEight = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 2, 2, true, 8);
+            Chromosome[] populationNone = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 3, 1, false, 9);
+            Chromosome[] populationTen = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 3, 2, false, 10);
+            Chromosome[] populationEleven = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 3, 1, true, 11);
+            Chromosome[] populationTwenty = PopulationHelper.generatePopulation(generation.clone(), n, pc, pm, 3, 2, true, 12);
 
             Chromosome[] merged = combine(populationOne, populationTwo);
             merged = combine(merged, populationThree);
             merged = combine(merged, populationFour);
             merged = combine(merged, populationFive);
             merged = combine(merged, populationSix);
+            merged = combine(merged, populationSeven);
+            merged = combine(merged, populationEight);
+            merged = combine(merged, populationNone);
+            merged = combine(merged, populationTen);
+            merged = combine(merged, populationEleven);
+            merged = combine(merged, populationTwenty);
 
-            MergeSort.sort(merged, 60);
+            MergeSort.sort(merged, 120);
 
             for (int j = 0; j < newGeneration.length; j++) {
                 newGeneration[j] = merged[j];
             }
 
             generation = newGeneration;
+            printGeneration(generation);
+//            printGeneration(generation);
             countGeneration++;
-            fittest = getMaxFittest(generation);
-            System.out.println("Generation: " + countGeneration + " Fittest " + fittest);
 
-        } while (countGeneration != 500); // The stop condition, don't implemented
+        } while (countGeneration != 100); // The stop condition, don't implemented
 
         System.out.println("Generation: " + countGeneration);
         return theBestFitness(generation);
@@ -77,22 +89,22 @@ public class GeneticAlgorithm {
         return population;
     }
 
-    private static double getMaxFittest(Chromosome[] initialPopulation) {
-        double maxFit = 0;
-        for (int i = 0; i < initialPopulation.length; i++) {
-            if (maxFit <= initialPopulation[i].getFitness()) {
-                maxFit = initialPopulation[i].getFitness();
+    private static double getMinFittest(Chromosome[] generation) {
+        double minFit = Double.MAX_VALUE;
+        for (int i = 0; i < generation.length; i++) {
+            if (minFit < generation[i].getFitness()) {
+                minFit = generation[i].getFitness();
             }
         }
-        return maxFit;
+        return minFit;
     }
 
     private static Chromosome theBestFitness(Chromosome[] generation) {
-        double bestFitness = 0;
+        double bestFitness = Double.MAX_VALUE;
         int bestIdx = 0;
 
         for (int i = 0; i < generation.length; i++) {
-            if (bestFitness > generation[i].getFitness()) {
+            if (bestFitness < generation[i].getFitness()) {
                 bestFitness = generation[i].getFitness();
                 bestIdx = i;
             }
