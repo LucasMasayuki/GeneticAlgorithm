@@ -3,8 +3,8 @@ import Model.Chromosome;
 
 public class Main {
     public static void main(String[] args) {
-        double crossingProbability = 0.7;
-        double mutationProbability = 0.001;
+        double crossingProbability = 0.9;
+        double mutationProbability = 0.2;
         int n = 10;
         int bits = 20;
 
