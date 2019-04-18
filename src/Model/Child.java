@@ -13,14 +13,14 @@ public class Child extends Chromosome {
     public Child(
         Chromosome parentOne,
         Chromosome parentTwo,
-        double pc,
+        boolean cross,
         double pm,
         int typeOfCross,
         int typeOfMutation
     ) {
         this.parentOne = parentOne;
         this.parentTwo = parentTwo;
-        int[] child = born(pc, pm, typeOfCross, typeOfMutation);
+        int[] child = born(cross, pm, typeOfCross, typeOfMutation);
 
         super.setChromosome(child);
         super.setFitness(super.calculateFitness());
@@ -36,7 +36,7 @@ public class Child extends Chromosome {
         super.setFitness(super.calculateFitness());
     }
 
-    private int[] born(double pc, double pm, int typeOfCross, int typeOfMutation) {
+    private int[] born(boolean cross, double pm, int typeOfCross, int typeOfMutation) {
         if (typeOfCross == 2) {
             int size = parentOne.getChromosome().length;
             start = RandomHelper.randomIntegerInInterval(size);
@@ -47,12 +47,14 @@ public class Child extends Chromosome {
                 end = start;
                 start = temp;
             }
+
+            //System.out.println("pontos de corte comeco " + start + " fim " + end);
         }
 
         int[] child = CrossoverHelper.crossover(
             this.parentOne.getChromosome(),
             this.parentTwo.getChromosome(),
-            pc,
+            cross,
             typeOfCross,
             start,
             end
@@ -61,23 +63,22 @@ public class Child extends Chromosome {
         return MutationHelper.mutation(child, pm, typeOfMutation);
     }
 
-    public Child generateBrotherUniform(double pc, double pm, int typeOfMutation) {
+    public Child generateBrotherUniform(boolean cross, double pm, int typeOfMutation) {
         int[] chromosome = this.getChromosome();
         int[] brother = CrossoverHelper.invertBrother(
             chromosome,
             parentTwo.getChromosome(),
-            pc
+            cross
         );
 
         return new Child(brother, pm, typeOfMutation);
     }
 
-    public Child generateBrotherDoubleCut(double pc, double pm, int typeOfMutation) {
-        int[] chromosome = this.getChromosome();
+    public Child generateBrotherDoubleCut(boolean cross, double pm, int typeOfMutation) {
         int[] brother = CrossoverHelper.reverseProcessDoubleCross(
                 parentOne.getChromosome(),
                 parentTwo.getChromosome(),
-                pc,
+                cross,
                 start,
                 end
         );

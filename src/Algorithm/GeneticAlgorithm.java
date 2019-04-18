@@ -1,10 +1,11 @@
 package Algorithm;
 
 import Model.Chromosome;
+import Utils.FileHelper;
 import Utils.MergeSort;
 import Utils.PopulationHelper;
 
-import java.util.Arrays;
+import java.io.File;
 
 public class GeneticAlgorithm {
     private static int bits;
@@ -17,7 +18,15 @@ public class GeneticAlgorithm {
     ) {
         bits = length;
         Chromosome[] initialPopulation = generateInitialPopulation(n);
+
+        saveInitialGeneration(initialPopulation);
+
         Chromosome[] generation = initialPopulation;
+
+        FileHelper avgFile = new FileHelper("Media");
+        FileHelper bestFile = new FileHelper("Melhores");
+        String bestText = "" + theBestFitness(generation).getFitness() + " \n";
+        String avgText =  "" + theAvgFitness(generation) + " \n";
 
         double fittest = getMinFittest(initialPopulation);
         System.out.println("Generation: " + 0 + " Fittest " + fittest);
@@ -59,11 +68,17 @@ public class GeneticAlgorithm {
             }
 
             generation = newGeneration;
-            printGeneration(generation);
+            bestText += theBestFitness(generation).getFitness() + " \n";
+            avgText +=  theAvgFitness(generation) + " \n";
 //            printGeneration(generation);
             countGeneration++;
 
-        } while (countGeneration != 100); // The stop condition, don't implemented
+        } while (countGeneration != 1000); // The stop condition, don't implemented
+
+        bestFile.write(bestText);
+        avgFile.write(avgText);
+        avgFile.save();
+        bestFile.save();
 
         System.out.println("Generation: " + countGeneration);
         return theBestFitness(generation);
@@ -113,6 +128,21 @@ public class GeneticAlgorithm {
         return generation[bestIdx];
     }
 
+    private static double theAvgFitness(Chromosome[] generation) {
+        int total = generation.length;
+        int sum = 0;
+
+        for (int i = 0; i < total; i++) {
+            sum += generation[i].getFitness();
+        }
+
+        if (sum == 0) {
+            return 0;
+        }
+
+        return sum / total;
+    }
+
     private static void fillProportionalPercentOfTotalFitness(Chromosome[] population) {
         double summationFitness = summationFitness(population);
         int sizeOfPopulation = population.length;
@@ -130,6 +160,22 @@ public class GeneticAlgorithm {
             System.out.println("proportional: " + population[i].getPercentOfTotalFitness() + " fitness " + population[i].getFitness());
         }
         System.out.println("finish|||");
+    }
+
+    private static void saveInitialGeneration(Chromosome[] initialPopulation) {
+        FileHelper fileHelper = new FileHelper("initial_population");
+        String text = "";
+        for (int i = 0; i < initialPopulation.length; i++) {
+            int[] chromosome = initialPopulation[i].getChromosome();
+            String stringChromosome = "";
+            for (int j = 0; j < chromosome.length; j++) {
+                stringChromosome += chromosome[j];
+            }
+            text += "Cromossomo: " + stringChromosome + " fitness: " + initialPopulation[i].getFitness() + " \n";
+        }
+
+        fileHelper.write(text);
+        fileHelper.save();
     }
 
     private static double summationFitness(Chromosome[] population) {

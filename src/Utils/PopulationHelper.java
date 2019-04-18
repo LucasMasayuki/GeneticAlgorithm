@@ -31,6 +31,7 @@ public class PopulationHelper {
     ) {
         Roulette roulette = new Roulette(currentPopulation);
         Chromosome[] population = new Chromosome[n];
+
         for (int i = 0; i < n; i += 2) {
             Chromosome parentOne;
 
@@ -41,39 +42,50 @@ public class PopulationHelper {
             }
 
             Chromosome parentTwo = roulette.spin();
-            int[] chromosome1 = parentOne.getChromosome();
-            int[] chromosome2 = parentTwo.getChromosome();
 
-            String parent1 = "";
-            String parent2 = "";
+            print(populationNumber, parentOne, parentTwo, false);
 
-            for (int j = chromosome1.length - 1; j > 0; j--) {
-                parent1 += Integer.toString(chromosome1[j]);
-                parent2 += Integer.toString(chromosome2[j]);
+            double random = RandomHelper.randomDoubleInInterval(0, 1);
+            boolean cross = random < pc;
+
+            Child childOne = new Child(parentOne, parentTwo, cross, pm, typeOfCross, typeOfMutation);
+            Child childTwo;
+            if (typeOfCross == 1) {
+                childTwo = new Child(parentTwo, parentOne, cross, pm, typeOfCross, typeOfMutation);
+            } else if (typeOfCross == 2) {
+                childTwo = childOne.generateBrotherDoubleCut(cross, pm, typeOfMutation);
+            } else {
+                childTwo = childOne.generateBrotherUniform(cross, pm, typeOfMutation);
             }
 
-            //System.out.println("Population "+ populationNumber + " : Parent 1 " + parent1 + " Fittest1 " + parentOne.getFitness() + " Parent 2 " + parent2 + " Fittest2 " + parentTwo.getFitness());
-            System.out.println("Population "+ populationNumber + " : Parent 1 " + parent1  + " Parent 2 " + parent2);
-            Child childOne = new Child(parentOne, parentTwo, pc, pm, typeOfCross, typeOfMutation);
-            Child childTwo = new Child(parentTwo, parentOne, pc, pm, typeOfCross, typeOfMutation);
-            int[] chromosome12 = childOne.getChromosome();
-            int[] chromosome22 = childTwo.getChromosome();
+            print(populationNumber, childOne, childTwo, true);
 
-            String child1 = "";
-            String child2 = "";
-
-            for (int j = chromosome12.length - 1; j > 0; j--) {
-                child1 += Integer.toString(chromosome12[j]);
-                child2 += Integer.toString(chromosome22[j]);
-            }
-
-            //System.out.println("Population "+ populationNumber + " : Child 1  " + child1 + " Fittest1 " + childOne.getFitness() + " Child 2  " + child2 + " Fittest2 " + childTwo.getFitness());
-            System.out.println("Population "+ populationNumber + " : Child 1  " + child1 + " Child 2  " + child2);
             population[i] = childOne;
             population[i + 1] = childTwo;
         }
 
         MergeSort.sort(population, n);
         return population;
+    }
+
+    private static void print(int populationNumber, Chromosome chromosomeOne, Chromosome chromosomeTwo, boolean isChild) {
+        int[] chromosome12 = chromosomeOne.getChromosome();
+        int[] chromosome22 = chromosomeTwo.getChromosome();
+
+        String chromosome1 = "";
+        String chromosome2 = "";
+
+        for (int j = chromosome12.length - 1; j > 0; j--) {
+            chromosome1 += Integer.toString(chromosome12[j]);
+            chromosome2 += Integer.toString(chromosome22[j]);
+        }
+
+        if (isChild) {
+            //System.out.println("Population "+ populationNumber + " : Child 1  " + child1 + " Fittest1 " + childOne.getFitness() + " Child 2  " + child2 + " Fittest2 " + childTwo.getFitness());
+            System.out.println("Population "+ populationNumber + " : Child 1  " + chromosome1 + " Child 2  " + chromosome2);
+        } else {
+            //System.out.println("Population "+ populationNumber + " : Parent 1 " + parent1 + " Fittest1 " + parentOne.getFitness() + " Parent 2 " + parent2 + " Fittest2 " + parentTwo.getFitness());
+            System.out.println("Population "+ populationNumber + " : Parent 1 " + chromosome1  + " Parent 2 " + chromosome2);
+        }
     }
 }

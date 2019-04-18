@@ -10,7 +10,11 @@ import java.util.List;
 
 public class FileHelper {
     private List<String> lines = new ArrayList<>();
-    private String fileName = "";
+    private String fileName;
+
+    public FileHelper(String fileName) {
+        this.fileName = fileName;
+    }
 
     public void write(String text) {
         this.lines.add(text);

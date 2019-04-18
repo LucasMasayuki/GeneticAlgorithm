@@ -38,7 +38,7 @@ public class NumberHelper {
 
     public static double getQ(double min, double max, int numOfBits) {
         double q = (max - min) / Math.pow(2, numOfBits) - 1;
-        return q;
+        return 1 / q;
     }
 
     public static double realX(int decimal, double min, double max, int numOfBits) {
