@@ -17,12 +17,16 @@ public class Roulette {
         double random = RandomHelper.randomDoubleInInterval(0, 1);
 
         while (percent < random) {
+            // System.out.println("percentual " + percent);
+            // System.out.println("aleatorio " + random);
             i++;
             percent = this.population[i].getPercentOfTotalFitness();
         }
 
-        Chromosome drawn = this.population[i];
+        if (percent != random && i != 0) {
+            i -= 1;
+        }
 
-        return drawn;
+        return this.population[i];
     }
 }

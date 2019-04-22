@@ -5,8 +5,22 @@ import Model.Child;
 import Model.Chromosome;
 
 public class PopulationHelper {
+//    private static Chromosome theBestFitness(Chromosome[] generation) {
+//        double bestFitness = Double.MAX_VALUE;
+//        int bestIdx = 0;
+//
+//        for (int i = 0; i < generation.length; i++) {
+//            if (bestFitness < generation[i].getFitness()) {
+//                bestFitness = generation[i].getFitness();
+//                bestIdx = i;
+//            }
+//        }
+//
+//        return generation[bestIdx];
+//    }
+
     private static Chromosome theBestFitness(Chromosome[] generation) {
-        double bestFitness = Double.MAX_VALUE;
+        double bestFitness = 0;
         int bestIdx = 0;
 
         for (int i = 0; i < generation.length; i++) {
@@ -51,7 +65,7 @@ public class PopulationHelper {
             Child childOne = new Child(parentOne, parentTwo, cross, pm, typeOfCross, typeOfMutation);
             Child childTwo;
             if (typeOfCross == 1) {
-                childTwo = new Child(parentTwo, parentOne, cross, pm, typeOfCross, typeOfMutation);
+                childTwo = childOne.generateBrotherSingle(cross, pm, typeOfCross, typeOfMutation);
             } else if (typeOfCross == 2) {
                 childTwo = childOne.generateBrotherDoubleCut(cross, pm, typeOfMutation);
             } else {
@@ -75,7 +89,7 @@ public class PopulationHelper {
         String chromosome1 = "";
         String chromosome2 = "";
 
-        for (int j = chromosome12.length - 1; j > 0; j--) {
+        for (int j = chromosome12.length - 1; j >= 0; j--) {
             chromosome1 += Integer.toString(chromosome12[j]);
             chromosome2 += Integer.toString(chromosome22[j]);
         }

@@ -9,6 +9,7 @@ public class Child extends Chromosome {
     private Chromosome parentTwo;
     private int start = 0;
     private int end = 0;
+    private int chosedPoint = 0;
 
     public Child(
         Chromosome parentOne,
@@ -37,8 +38,10 @@ public class Child extends Chromosome {
     }
 
     private int[] born(boolean cross, double pm, int typeOfCross, int typeOfMutation) {
-        if (typeOfCross == 2) {
-            int size = parentOne.getChromosome().length;
+        int size = parentOne.getChromosome().length - 1;
+        if (typeOfCross == 1) {
+            chosedPoint = RandomHelper.randomIntegerInInterval(size);
+        } else if (typeOfCross == 2) {
             start = RandomHelper.randomIntegerInInterval(size);
             end = RandomHelper.randomIntegerInInterval(size);
 
@@ -57,10 +60,25 @@ public class Child extends Chromosome {
             cross,
             typeOfCross,
             start,
-            end
+            end,
+            chosedPoint
         );
 
         return MutationHelper.mutation(child, pm, typeOfMutation);
+    }
+
+    public Child generateBrotherSingle(boolean cross, double pm, int typeOfCross, int typeOfMutation) {
+        int[] brother = CrossoverHelper.crossover(
+            this.parentTwo.getChromosome(),
+            this.parentOne.getChromosome(),
+            cross,
+            typeOfCross,
+            start,
+            end,
+            chosedPoint
+        );
+
+        return new Child(brother, pm, typeOfMutation);
     }
 
     public Child generateBrotherUniform(boolean cross, double pm, int typeOfMutation) {
@@ -76,11 +94,11 @@ public class Child extends Chromosome {
 
     public Child generateBrotherDoubleCut(boolean cross, double pm, int typeOfMutation) {
         int[] brother = CrossoverHelper.reverseProcessDoubleCross(
-                parentOne.getChromosome(),
-                parentTwo.getChromosome(),
-                cross,
-                start,
-                end
+            parentOne.getChromosome(),
+            parentTwo.getChromosome(),
+            cross,
+            start,
+            end
         );
 
         return new Child(brother, pm, typeOfMutation);

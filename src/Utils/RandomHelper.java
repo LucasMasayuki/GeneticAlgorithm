@@ -10,14 +10,6 @@ public class RandomHelper {
 
     public static double randomDoubleInInterval(double min, double max) {
         double diff = max - min;
-        return  min + Math.random() * diff;
-    }
-
-    public static double randomRoundedNumber() {
-        return Math.round(Math.random());
-    }
-
-    public static double random() {
-        return Math.random();
+        return  min + (Math.random() * diff);
     }
 }

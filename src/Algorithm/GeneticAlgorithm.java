@@ -4,8 +4,7 @@ import Model.Chromosome;
 import Utils.FileHelper;
 import Utils.MergeSort;
 import Utils.PopulationHelper;
-
-import java.io.File;
+import Algorithm.Roulette;
 
 public class GeneticAlgorithm {
     private static int bits;
@@ -25,10 +24,12 @@ public class GeneticAlgorithm {
 
         FileHelper avgFile = new FileHelper("Media");
         FileHelper bestFile = new FileHelper("Melhores");
-        String bestText = "" + theBestFitness(generation).getFitness() + " \n";
-        String avgText =  "" + theAvgFitness(generation) + " \n";
+        double best = theBestFitness(generation).getFitness();
+        double avg = theAvgFitness(generation);
+        String bestText = Double.toString(best).replace('.', ',') + " \n";
+        String avgText =  Double.toString(avg).replace('.', ',') + " \n";
 
-        double fittest = getMinFittest(initialPopulation);
+        double fittest = getMaxFittest(initialPopulation);
         System.out.println("Generation: " + 0 + " Fittest " + fittest);
         int countGeneration = 0;
 
@@ -62,18 +63,44 @@ public class GeneticAlgorithm {
             merged = combine(merged, populationTwenty);
 
             MergeSort.sort(merged, 120);
+//            fillProportionalPercentOfTotalFitness(merged);
+//            printGeneration(merged);
 
-            for (int j = 0; j < newGeneration.length; j++) {
-                newGeneration[j] = merged[j];
+//            for (int j = 0; j < n; j++) {
+//                newGeneration[j] = merged[j];
+//            }
+
+            int bests = n / 2;
+            Chromosome[] theRest = new Chromosome[merged.length - bests - 1];
+
+            int k = 0;
+            for (int j = 0; j < merged.length; j++) {
+                if (j <= bests) {
+                    newGeneration[j] = merged[j];
+                } else {
+                    theRest[k] = merged[j];
+                    k++;
+                }
+            }
+
+            //fillProportionalPercentOfTotalFitness(theRest);
+
+            Roulette roulette = new Roulette(theRest);
+            // printGeneration(theRest);
+
+            for (int j = bests + 1; j < newGeneration.length; j++) {
+                newGeneration[j] = roulette.spin();
             }
 
             generation = newGeneration;
-            bestText += theBestFitness(generation).getFitness() + " \n";
-            avgText +=  theAvgFitness(generation) + " \n";
-//            printGeneration(generation);
+            best = theBestFitness(generation).getFitness();
+            avg = theAvgFitness(generation);
+            bestText += Double.toString(best).replace('.', ',') + " \n";
+            avgText +=  Double.toString(avg).replace('.', ',') + " \n";
+            // printGeneration(generation);
             countGeneration++;
 
-        } while (countGeneration != 1000); // The stop condition, don't implemented
+        } while (countGeneration != 5000);
 
         bestFile.write(bestText);
         avgFile.write(avgText);
@@ -107,15 +134,39 @@ public class GeneticAlgorithm {
     private static double getMinFittest(Chromosome[] generation) {
         double minFit = Double.MAX_VALUE;
         for (int i = 0; i < generation.length; i++) {
-            if (minFit < generation[i].getFitness()) {
+            if (minFit > generation[i].getFitness()) {
                 minFit = generation[i].getFitness();
             }
         }
         return minFit;
     }
 
+    private static double getMaxFittest(Chromosome[] generation) {
+        double maxFit = 0;
+        for (int i = 0; i < generation.length; i++) {
+            if (maxFit < generation[i].getFitness()) {
+                maxFit = generation[i].getFitness();
+            }
+        }
+        return maxFit;
+    }
+
+//    private static Chromosome theBestFitness(Chromosome[] generation) {
+//        double bestFitness = Double.MAX_VALUE;
+//        int bestIdx = 0;
+//
+//        for (int i = 0; i < generation.length; i++) {
+//            if (bestFitness > generation[i].getFitness()) {
+//                bestFitness = generation[i].getFitness();
+//                bestIdx = i;
+//            }
+//        }
+//
+//        return generation[bestIdx];
+//    }
+
     private static Chromosome theBestFitness(Chromosome[] generation) {
-        double bestFitness = Double.MAX_VALUE;
+        double bestFitness = 0;
         int bestIdx = 0;
 
         for (int i = 0; i < generation.length; i++) {
@@ -129,15 +180,15 @@ public class GeneticAlgorithm {
     }
 
     private static double theAvgFitness(Chromosome[] generation) {
-        int total = generation.length;
-        int sum = 0;
+        double total = generation.length;
+        double sum = 0;
 
         for (int i = 0; i < total; i++) {
             sum += generation[i].getFitness();
         }
 
         if (sum == 0) {
-            return 0;
+            return sum;
         }
 
         return sum / total;
@@ -146,11 +197,13 @@ public class GeneticAlgorithm {
     private static void fillProportionalPercentOfTotalFitness(Chromosome[] population) {
         double summationFitness = summationFitness(population);
         int sizeOfPopulation = population.length;
-        double percent = 0;
+        double total = 0;
 
         for (int i = 0; i < sizeOfPopulation; i++) {
-            percent += population[i].getFitness() / summationFitness;
-            population[i].setPercentOfTotalFitness(percent);
+            //percent = (1 / population[i].getFitness() + Math.pow(10, -9)) / summationFitness;
+            double percent = population[i].getFitness() / summationFitness;
+            total += percent;
+            population[i].setPercentOfTotalFitness(total);
         }
     }
 
@@ -184,6 +237,7 @@ public class GeneticAlgorithm {
 
         for (int i = 0; i < sizeOfPopulation; i++) {
             double fitness = population[i].getFitness();
+            //totalFitness +=  (1 / fitness +  Math.pow(10, -9));
             totalFitness +=  fitness;
         }
 

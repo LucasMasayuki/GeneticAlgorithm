@@ -7,13 +7,14 @@ public class CrossoverHelper {
         boolean cross,
         int typeOfCross,
         int start,
-        int end
+        int end,
+        int positionToStop
     ) {
         int[] child = new int[parentOne.length];
 
         switch (typeOfCross) {
             case 1: {
-                child = singleCross(parentOne, parentTwo, cross);
+                child = singleCross(parentOne, parentTwo, cross, positionToStop);
                 break;
             }
 
@@ -61,6 +62,7 @@ public class CrossoverHelper {
             int end
     ) {
         if (cross) {
+            // System.out.println("ponto crossover t" + start + " fin " + end);
             int maxSize = parentOne.length;
             int[] brother = new int[maxSize];
             for (int i = 0; i < maxSize; i++) {
@@ -80,12 +82,13 @@ public class CrossoverHelper {
     private static int[] singleCross(
         int[] parentOne,
         int[] parentTwo,
-        boolean cross
+        boolean cross,
+        int positionToStop
     ) {
         if (cross) {
+            // System.out.println("ponto crossover " + positionToStop);
             int maxSize = parentOne.length;
             int[] child = new int[maxSize];
-            int positionToStop = RandomHelper.randomIntegerInInterval(maxSize);
 
             for (int i = 0; i < maxSize; i++) {
                 if (i < positionToStop) {

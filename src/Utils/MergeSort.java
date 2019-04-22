@@ -34,7 +34,7 @@ public class MergeSort {
     ) {
         int i = 0, j = 0, k = 0;
         while (i < left && j < right) {
-            if (l[i].getFitness() <= r[j].getFitness()) {
+            if (l[i].getFitness() > r[j].getFitness()) {
                 a[k++] = l[i++];
             }
             else {
